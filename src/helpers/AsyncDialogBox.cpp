@@ -160,13 +160,7 @@ SP<CAsyncDialogBox> CAsyncDialogBox::lockSelf() {
     return m_selfWeakReference.lock();
 }
 
-void CAsyncDialogBox::setExecRule(std::string&& s) {
-    auto rule = Desktop::Rule::CWindowRule::buildFromExecString(std::move(s));
-    if (!rule) {
-        LOG(Log::ERR, "CAsyncDialogBox: failed to parse exec rule: {}", rule.error());
-        return;
-    }
-
-    m_execRuleToken = (*rule)->execToken();
-    Desktop::Rule::ruleEngine()->registerRule(std::move(*rule));
+void CAsyncDialogBox::setExecRule(SP<Desktop::Rule::CWindowRule> rule) {
+    m_execRuleToken = rule->execToken();
+    Desktop::Rule::ruleEngine()->registerRule(std::move(rule));
 }

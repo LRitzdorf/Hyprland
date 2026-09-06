@@ -3,6 +3,7 @@
 #include "../macros.hpp"
 #include "./memory/Memory.hpp"
 #include "./defer/Promise.hpp"
+#include "../desktop/rule/windowRule/WindowRule.hpp"
 
 #include <vector>
 #include <functional>
@@ -27,7 +28,7 @@ class CAsyncDialogBox {
     void                      kill();
     bool                      isRunning() const;
     pid_t                     getPID() const;
-    void                      setExecRule(std::string&& s);
+    void                      setExecRule(SP<Desktop::Rule::CWindowRule> rule);
 
     SP<CAsyncDialogBox>       lockSelf();
 
