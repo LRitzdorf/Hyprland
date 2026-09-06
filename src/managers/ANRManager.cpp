@@ -194,8 +194,13 @@ void CANRManager::SANRData::runDialog(const std::string& appName, const std::str
         if (!fitsWindow(w))
             continue;
 
-        if (w->m_workspace)
-            dialogBox->setExecRule(std::format("workspace {} silent", Workspace::selector(*w->m_workspace)));
+        if (w->m_workspace) {
+            auto wr  = makeShared<Desktop::Rule::CWindowRule>("__exec_rule");
+            auto res = wr->addEffect(Desktop::Rule::eWindowRuleEffect::WINDOW_RULE_EFFECT_WORKSPACE, std::format("{} silent", Workspace::selector(*w->m_workspace)));
+            if (!res)
+                LOG(Log::ERR, "CANRManager::SANRData::runDialog: failed to apply workspace rule: {}", res.error());
+            dialogBox->setExecRule(wr);
+        }
 
         break;
     }

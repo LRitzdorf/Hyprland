@@ -486,42 +486,6 @@ bool CWindowRule::matches(PHLWINDOW w, bool allowEnvLookup) {
     return true;
 }
 
-std::expected<SP<CWindowRule>, std::string> CWindowRule::buildFromExecString(std::string&& s) {
-    CVarList2       varlist(std::move(s), 0, ';');
-    SP<CWindowRule> wr = makeShared<CWindowRule>("__exec_rule");
-
-    for (const auto& el : varlist) {
-        // split element by space, can't do better
-        size_t spacePos = el.find(' ');
-        if (spacePos != std::string::npos) {
-            // great, split and try to parse
-            auto       LHS    = el.substr(0, spacePos);
-            const auto EFFECT = windowEffects()->get(LHS);
-
-            if (!EFFECT.has_value() || *EFFECT == WINDOW_RULE_EFFECT_NONE)
-                continue; // invalid...
-
-            auto res = wr->addEffect(*EFFECT, std::string{el.substr(spacePos + 1)});
-            if (!res)
-                return std::unexpected(res.error());
-            continue;
-        }
-
-        // assume 1 maybe...
-
-        const auto EFFECT = windowEffects()->get(el);
-
-        if (!EFFECT.has_value() || *EFFECT == WINDOW_RULE_EFFECT_NONE)
-            continue; // invalid...
-
-        auto res = wr->addEffect(*EFFECT, std::string{"1"});
-        if (!res)
-            return std::unexpected(res.error());
-    }
-
-    return wr;
-}
-
 bool CWindowRule::matches(Desktop::Rule::eRuleProperty p, const std::string& s) {
     if (!canMatch())
         return false;
