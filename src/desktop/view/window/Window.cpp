@@ -1353,7 +1353,7 @@ void CWindow::mapWindow() {
             auto pWorkspace = State::workspaceState()->query().id(requestedWorkspaceID).run();
 
             if (!pWorkspace)
-                pWorkspace = State::workspaceState()->create(requestedWorkspaceID, monitorID(), requestedWorkspaceName, false);
+                pWorkspace = State::workspaceState()->create(requestedWorkspaceID, monitorID(), requestedWorkspaceName);
 
             PWORKSPACE = pWorkspace;
 

@@ -27,15 +27,15 @@
 using namespace Hyprutils::String;
 using namespace Desktop::View;
 
-PHLWORKSPACE CWorkspace::create(WORKSPACEID id, PHLMONITOR monitor, std::string name, bool special, bool isEmpty) {
-    PHLWORKSPACE workspace = makeShared<CWorkspace>(id, monitor, name, special, isEmpty);
+PHLWORKSPACE CWorkspace::create(WORKSPACEID id, PHLMONITOR monitor, std::string name, bool special) {
+    PHLWORKSPACE workspace = makeShared<CWorkspace>(id, monitor, name, special);
     workspace->init(workspace);
     State::workspaceState()->add(workspace);
     return workspace;
 }
 
-CWorkspace::CWorkspace(WORKSPACEID id, PHLMONITOR monitor, std::string name, bool special, bool isEmpty) :
-    m_id(id), m_name(name), m_monitor(monitor), m_isSpecialWorkspace(special), m_wasCreatedEmpty(isEmpty) {
+CWorkspace::CWorkspace(WORKSPACEID id, PHLMONITOR monitor, std::string name, bool special) :
+    m_id(id), m_name(name), m_monitor(monitor), m_isSpecialWorkspace(special) {
     ;
 }
 
@@ -65,10 +65,6 @@ void CWorkspace::init(PHLWORKSPACE self) {
 
     const auto WORKSPACERULE = Config::workspaceRuleMgr()->getWorkspaceRuleFor(self).value_or(Config::CWorkspaceRule{});
     setPersistent(WORKSPACERULE.m_isPersistent.value_or(false));
-
-    if (self->m_wasCreatedEmpty)
-        if (auto cmd = WORKSPACERULE.m_onCreatedEmptyRunCmd)
-            Config::Supplementary::executor()->spawnWithRules(*cmd, self);
 
     IPC::Socket2::sock()->postEvent({.event = "createworkspace", .data = m_name});
     IPC::Socket2::sock()->postEvent({.event = "createworkspacev2", .data = std::format("{},{}", m_id, m_name)});

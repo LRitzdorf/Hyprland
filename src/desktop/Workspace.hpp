@@ -13,9 +13,9 @@ namespace Layout {
 
 class CWorkspace {
   public:
-    static PHLWORKSPACE create(WORKSPACEID id, PHLMONITOR monitor, std::string name, bool special = false, bool isEmpty = true);
+    static PHLWORKSPACE create(WORKSPACEID id, PHLMONITOR monitor, std::string name, bool special = false);
     // use create() don't use this
-    CWorkspace(WORKSPACEID id, PHLMONITOR monitor, std::string name, bool special = false, bool isEmpty = true);
+    CWorkspace(WORKSPACEID id, PHLMONITOR monitor, std::string name, bool special = false);
     ~CWorkspace();
 
     WP<CWorkspace>     m_self;
@@ -45,8 +45,6 @@ class CWorkspace {
 
     // last monitor (used on reconnect)
     std::string m_lastMonitor = "";
-
-    bool        m_wasCreatedEmpty = true;
 
     // Inert: destroyed and invalid. If this is true, release the ptr you have.
     bool        inert();

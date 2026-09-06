@@ -55,7 +55,7 @@ void CWorkspaceStateTracker::clear() {
     m_seenMonitorWorkspaceMap.clear();
 }
 
-PHLWORKSPACE CWorkspaceStateTracker::create(const WORKSPACEID& id, const MONITORID& monid, const std::string& name, bool isEmpty) {
+PHLWORKSPACE CWorkspaceStateTracker::create(const WORKSPACEID& id, const MONITORID& monid, const std::string& name) {
     const auto NAME  = name.empty() ? std::to_string(id) : name;
     auto       monID = monid;
 
@@ -71,7 +71,7 @@ PHLWORKSPACE CWorkspaceStateTracker::create(const WORKSPACEID& id, const MONITOR
         return nullptr;
     }
 
-    const auto PWORKSPACE = CWorkspace::create(id, PMONITOR, NAME, SPECIAL, isEmpty);
+    const auto PWORKSPACE = CWorkspace::create(id, PMONITOR, NAME, SPECIAL);
 
     PWORKSPACE->m_alpha->setValueAndWarp(0);
 

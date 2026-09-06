@@ -81,7 +81,7 @@ void CWorkspacePlacementController::ensurePersistentWorkspacesPresent(const std:
                 PMONITOR = Desktop::focusState()->monitor();
 
             if (!PWORKSPACE)
-                PWORKSPACE = State::workspaceState()->create(id, PMONITOR->m_id, wsname, false);
+                PWORKSPACE = State::workspaceState()->create(id, PMONITOR->m_id, wsname);
         }
 
         if (!PMONITOR) {
