@@ -8,6 +8,7 @@
 #include "../render/OpenGL.hpp"
 #include "../config/ConfigManager.hpp"
 #include "../state/MonitorState.hpp"
+#include "../helpers/string/StringUtils.hpp"
 
 #include <hyprutils/string/String.hpp>
 
@@ -39,14 +40,6 @@ std::string SystemInfo::getStatus(eOutputFormat fmt) {
         break;
     }
 
-    std::string backendStr;
-
-    switch (backendType) {
-        case Aquamarine::AQ_BACKEND_DRM: backendStr = "drm"; break;
-        case Aquamarine::AQ_BACKEND_WAYLAND: backendStr = "wayland"; break;
-        default: backendStr = "error"; break;
-    }
-
     if (fmt == IPC::Socket1::FORMAT_JSON) {
 
         return std::format(R"#(
@@ -55,14 +48,14 @@ std::string SystemInfo::getStatus(eOutputFormat fmt) {
     "backend": "{}"
 }}
 )#",
-                           Config::typeToString(Config::mgr()->type()), backendStr);
+                           Config::typeToString(Config::mgr()->type()), StringUtils::backendStr(backendType));
     }
 
     return std::format(R"#(
 configProvider: {}
 backend: {}
 )#",
-                       Config::typeToString(Config::mgr()->type()), backendStr);
+                       Config::typeToString(Config::mgr()->type()), StringUtils::backendStr(backendType));
 }
 
 std::string SystemInfo::getVersion(eOutputFormat fmt) {
@@ -146,16 +139,7 @@ std::string SystemInfo::getVersion(eOutputFormat fmt) {
 std::string SystemInfo::getSystemInfo() {
     std::string result = getVersion(IPC::Socket1::FORMAT_NORMAL);
 
-    static auto check   = [](bool y) -> std::string { return y ? "✔️" : "❌"; };
-    static auto backend = [](Aquamarine::eBackendType t) -> std::string {
-        switch (t) {
-            case Aquamarine::AQ_BACKEND_DRM: return "drm";
-            case Aquamarine::AQ_BACKEND_HEADLESS: return "headless";
-            case Aquamarine::AQ_BACKEND_WAYLAND: return "wayland";
-            default: break;
-        }
-        return "?";
-    };
+    static auto check = [](bool y) -> std::string { return y ? "✔️" : "❌"; };
 
     result += "\n\nSystem Information:\n";
 
@@ -243,9 +227,9 @@ std::string SystemInfo::getSystemInfo() {
             result += std::format("\n\tPanel {}: {}x{}, {} {} {} {} -> backend {}\n\t\texplicit {}\n\t\tedid:\n\t\t\thdr {}\n\t\t\tchroma {}\n\t\t\tbt2020 {}\n\t\tvrr capable "
                                   "{}\n\t\tnon-desktop {}\n\t\t",
                                   m->m_name, sc<int>(m->m_pixelSize.x), sc<int>(m->m_pixelSize.y), m->m_output->name, m->m_output->make, m->m_output->model, m->m_output->serial,
-                                  backend(m->m_output->getBackend()->type()), check(m->m_output->supportsExplicit), check(m->m_output->parsedEDID.hdrMetadata.has_value()),
-                                  check(m->m_output->parsedEDID.chromaticityCoords.has_value()), check(m->m_output->parsedEDID.supportsBT2020), check(m->m_output->vrrCapable),
-                                  check(m->m_output->nonDesktop));
+                                  StringUtils::backendStr(m->m_output->getBackend()->type()), check(m->m_output->supportsExplicit),
+                                  check(m->m_output->parsedEDID.hdrMetadata.has_value()), check(m->m_output->parsedEDID.chromaticityCoords.has_value()),
+                                  check(m->m_output->parsedEDID.supportsBT2020), check(m->m_output->vrrCapable), check(m->m_output->nonDesktop));
         }
     }
 
