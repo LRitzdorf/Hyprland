@@ -94,38 +94,10 @@ std::optional<uint64_t> CExecutor::spawnRaw(const std::string& args) {
     return spawnRawProc(args);
 }
 
-std::optional<uint64_t> CExecutor::spawnWithRules(std::string args, PHLWORKSPACE pInitialWorkspace) {
-    return spawnWithRules(std::move(args), pInitialWorkspace, nullptr);
-}
-
 std::optional<uint64_t> CExecutor::spawnWithRules(std::string args, PHLWORKSPACE pInitialWorkspace, SP<Desktop::Rule::CWindowRule> rule) {
     args = trim(args);
 
-    std::string RULES = "";
-
-    if (args[0] == '[') {
-        // we have exec rules
-        const auto end = args.find_first_of(']');
-        if (end == std::string::npos)
-            return std::nullopt;
-
-        RULES = args.substr(1, end - 1);
-        args  = args.substr(end + 1);
-    }
-
-    SP<Desktop::Rule::CWindowRule> legacyRule;
-
-    if (!RULES.empty()) {
-        auto builtRule = Desktop::Rule::CWindowRule::buildFromExecString(std::move(RULES));
-        if (!builtRule) {
-            LOG(Log::ERR, "Failed to parse exec rule: {}", builtRule.error());
-            return std::nullopt;
-        }
-
-        legacyRule = std::move(*builtRule);
-    }
-
-    if (!legacyRule && !rule)
+    if (!rule)
         return spawnRawProc(args, pInitialWorkspace);
 
     const auto TOKEN = g_pTokenManager->registerNewToken(nullptr, std::chrono::seconds(1));
@@ -134,10 +106,7 @@ std::optional<uint64_t> CExecutor::spawnWithRules(std::string args, PHLWORKSPACE
     if (!PROC || !*PROC)
         return std::nullopt;
 
-    if (legacyRule)
-        applyRuleToProc(std::move(legacyRule), *PROC, TOKEN);
-    if (rule)
-        applyRuleToProc(std::move(rule), *PROC, TOKEN);
+    applyRuleToProc(std::move(rule), *PROC, TOKEN);
 
     return PROC;
 }

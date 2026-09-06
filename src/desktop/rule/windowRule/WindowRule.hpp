@@ -58,13 +58,11 @@ namespace Desktop::Rule {
         CWindowRule(CWindowRule&)       = default;
         CWindowRule(CWindowRule&&)      = default;
 
-        static std::expected<SP<CWindowRule>, std::string> buildFromExecString(std::string&&);
+        std::expected<void, std::string> addEffect(storageType e, const Math::SExpressionVec2& expr);
 
-        std::expected<void, std::string>                   addEffect(storageType e, const Math::SExpressionVec2& expr);
-
-        bool                                               matches(PHLWINDOW w, bool allowEnvLookup = false);
-        bool                                               matches(Desktop::Rule::eRuleProperty p, const std::string& s);
-        bool                                               matches(Desktop::Rule::eRuleProperty p, bool b);
+        bool                             matches(PHLWINDOW w, bool allowEnvLookup = false);
+        bool                             matches(Desktop::Rule::eRuleProperty p, const std::string& s);
+        bool                             matches(Desktop::Rule::eRuleProperty p, bool b);
 
       private:
         std::expected<WindowRuleEffectValue, std::string> parseEffect(storageType e, const std::string& result) override;
