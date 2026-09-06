@@ -66,9 +66,10 @@ void CWorkspace::init(PHLWORKSPACE self) {
     const auto WORKSPACERULE = Config::workspaceRuleMgr()->getWorkspaceRuleFor(self).value_or(Config::CWorkspaceRule{});
     setPersistent(WORKSPACERULE.m_isPersistent.value_or(false));
 
+    LOG(Log::DEBUG, "Creating workspace ID {}", m_id);
     IPC::Socket2::sock()->postEvent({.event = "createworkspace", .data = m_name});
     IPC::Socket2::sock()->postEvent({.event = "createworkspacev2", .data = std::format("{},{}", m_id, m_name)});
-    Event::bus()->m_events.workspace.created.emit(self);
+    Event::bus()->m_events.workspace.createdEarly.emit(self);
 }
 
 CWorkspace::~CWorkspace() {
