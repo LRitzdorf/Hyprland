@@ -70,7 +70,7 @@ namespace Workspace {
         } m_events;
 
       protected:
-        CHLWorkspace(WorkspaceID id, PHLMONITOR monitor, std::string displayName, std::string addressableName, eWorkspaceType type, bool isEmpty = true);
+        CHLWorkspace(WorkspaceID id, PHLMONITOR monitor, std::string displayName, std::string addressableName, eWorkspaceType type);
 
         // NOTE: For newly created workspaces, you must call their ready()
         // method once they've been set up! For example, if you're going to
