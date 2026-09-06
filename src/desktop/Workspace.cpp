@@ -85,6 +85,14 @@ CWorkspace::~CWorkspace() {
     m_events.destroy.emit();
 }
 
+void CWorkspace::ready() {
+    if (!m_ready) {
+        m_ready = true;
+        LOG(Log::DEBUG, "Workspace ID {} ready", m_id);
+        Event::bus()->m_events.workspace.createdLate.emit(m_self);
+    }
+}
+
 PHLWINDOW CWorkspace::getLastFocusedWindow() {
     if (!validMapped(m_lastFocusedWindow) || m_lastFocusedWindow->workspaceID() != m_id)
         return nullptr;

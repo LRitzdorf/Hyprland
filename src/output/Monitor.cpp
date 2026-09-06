@@ -1352,6 +1352,7 @@ void CMonitor::setupDefaultWS(const Config::CMonitorRule& monitorRule) {
     PNEWWORKSPACE->m_events.activeChanged.emit();
     PNEWWORKSPACE->m_visible     = true;
     PNEWWORKSPACE->m_lastMonitor = "";
+    PNEWWORKSPACE->ready();
 }
 
 void CMonitor::setMirror(const std::string& mirrorOf) {

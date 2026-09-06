@@ -55,6 +55,11 @@ void CWorkspaceStateTracker::clear() {
     m_seenMonitorWorkspaceMap.clear();
 }
 
+// NOTE: For newly created workspaces, you must call their `ready()` method (to
+// fire events and such) once they've been set up! That means, if you're going
+// to focus the workspace, do that *beforehand*, so events can tell that it is
+// in fact active. You may want to automate that with something like:
+//   `Hyprutils::Utils::CScopeGuard x([&]() { if (ws) ws->ready(); });`
 PHLWORKSPACE CWorkspaceStateTracker::create(const WORKSPACEID& id, const MONITORID& monid, const std::string& name) {
     const auto NAME  = name.empty() ? std::to_string(id) : name;
     auto       monID = monid;

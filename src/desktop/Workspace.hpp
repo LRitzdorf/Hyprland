@@ -46,6 +46,9 @@ class CWorkspace {
     // last monitor (used on reconnect)
     std::string m_lastMonitor = "";
 
+    bool        m_ready = false;
+
+    void        ready();
     // Inert: destroyed and invalid. If this is true, release the ptr you have.
     bool        inert();
     MONITORID   monitorID();
