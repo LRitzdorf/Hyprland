@@ -147,7 +147,7 @@ static std::string dirToString(Math::eDirection dir) {
     }
 }
 
-static PHLWORKSPACE findOrCreateWorkspace(const State::Workspace::STarget target, bool isEmpty) {
+static PHLWORKSPACE findOrCreateWorkspace(const State::Workspace::STarget target) {
     if (!target.valid())
         return nullptr;
 
@@ -155,15 +155,15 @@ static PHLWORKSPACE findOrCreateWorkspace(const State::Workspace::STarget target
     if (!ws) {
         const auto PMONITOR = Desktop::focusState()->monitor();
         if (PMONITOR)
-            ws = State::Workspace::state()->create(target, PMONITOR, isEmpty);
+            ws = State::Workspace::state()->create(target, PMONITOR);
     }
 
     return ws;
 }
 
-static PHLWORKSPACE findOrCreateWorkspace(const std::string& args, bool isEmpty) {
+static PHLWORKSPACE findOrCreateWorkspace(const std::string& args) {
     const auto TARGET = State::Workspace::resolver()->getWorkspaceTargetFromString(args);
-    return findOrCreateWorkspace(TARGET, isEmpty);
+    return findOrCreateWorkspace(TARGET);
 }
 
 static PHLWORKSPACE resolveWorkspaceForChange(const std::string& args) {
@@ -175,7 +175,7 @@ static PHLWORKSPACE resolveWorkspaceForChange(const std::string& args) {
 
     const auto PCURRENTWORKSPACE = PMONITOR->m_activeWorkspace;
 
-    auto       ws = findOrCreateWorkspace(args, true);
+    auto       ws = findOrCreateWorkspace(args);
     if (!ws)
         return nullptr;
 
@@ -187,7 +187,7 @@ static PHLWORKSPACE resolveWorkspaceForChange(const std::string& args) {
         const auto PREVIOUS = *PBACKANDFORTH == 2 ? Desktop::History::workspaceTracker()->previousWorkspace(PCURRENTWORKSPACE, PMONITOR) :
                                                     Desktop::History::workspaceTracker()->previousWorkspace(PCURRENTWORKSPACE);
 
-        auto       pPrevWorkspace = findOrCreateWorkspace(PREVIOUS.target, true);
+        auto       pPrevWorkspace = findOrCreateWorkspace(PREVIOUS.target);
         if (!pPrevWorkspace)
             return ws;
 
@@ -436,7 +436,7 @@ ActionResult Actions::moveToWorkspace(PHLWORKSPACE ws, bool silent, std::optiona
 }
 
 ActionResult Actions::moveToWorkspace(const std::string& ws, bool silent, std::optional<PHLWINDOW> w) {
-    const auto WORKSPACE = findOrCreateWorkspace(ws, false);
+    const auto WORKSPACE = findOrCreateWorkspace(ws);
     const auto res       = Actions::moveToWorkspace(WORKSPACE, silent, w);
     if (WORKSPACE)
         WORKSPACE->ready();
