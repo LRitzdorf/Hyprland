@@ -2439,7 +2439,7 @@ bool CMonitor::needsCM() {
 }
 
 static bool isCompatibleTF(eTransferFunction sourceTF, eTransferFunction targetTF) {
-    static auto PNONSHADER = CConfigValue<Hyprlang::INT>("render:non_shader_cm");
+    static auto PNONSHADER = CConfigValue<Config::INTEGER>("render:non_shader_cm");
     const auto  sdrEOTF    = NTransferFunction::fromConfig();
     return sourceTF == targetTF                                                                                                         // same
         || (sdrEOTF == NTransferFunction::TF_FORCED_GAMMA22 && sourceTF == NColorManagement::CM_TRANSFER_FUNCTION_SRGB                  // forced source gamma22 to output gamma22
@@ -2655,7 +2655,7 @@ bool CMonitor::needsACopyFB() {
 }
 
 bool CMonitor::needsUnmodifiedCopy() {
-    static const auto PKEEP = CConfigValue<Hyprlang::INT>("render:keep_unmodified_copy");
+    static const auto PKEEP = CConfigValue<Config::INTEGER>("render:keep_unmodified_copy");
     if (*PKEEP == 1)
         return true;
 
@@ -2673,7 +2673,7 @@ bool CMonitor::needsUnmodifiedCopy() {
 }
 
 bool CMonitor::useFP16() {
-    static const auto PFP16 = CConfigValue<Hyprlang::INT>("render:use_fp16");
+    static const auto PFP16 = CConfigValue<Config::INTEGER>("render:use_fp16");
 
     auto              isSRGB = [this] {
         if (m_imageDescription->value().transferFunction != CM_TRANSFER_FUNCTION_SRGB && m_imageDescription->value().transferFunction != CM_TRANSFER_FUNCTION_GAMMA22)
@@ -2690,7 +2690,7 @@ bool CMonitor::useFP16() {
 }
 
 PImageDescription CMonitor::workBufferImageDescription() {
-    static const auto PFP16TF = CConfigValue<Hyprlang::INT>("render:fp16_sdr_tf");
+    static const auto PFP16TF = CConfigValue<Config::INTEGER>("render:fp16_sdr_tf");
 
     if (!useFP16() && !m_imageDescription->value().icc.present)
         return m_imageDescription;
