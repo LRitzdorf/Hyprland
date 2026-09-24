@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <hyprgraphics/color/Color.hpp>
 #include "../macros.hpp"
+#include "../desktop/DesktopTypes.hpp"
 
 class CHyprColor {
   public:
@@ -60,3 +61,6 @@ namespace Colors {
     inline const CHyprColor LIGHT_BLUE = CHyprColor(0.1F, 1.F, 1.F, 1.F);
     inline const CHyprColor BLACK      = CHyprColor(0.F, 0.F, 0.F, 1.F);
 };
+
+// This is horrible and gets used in multiple places, so just make it a helper
+static inline CHyprColor getWindowBorderColor(const PHLWINDOW window, bool active);

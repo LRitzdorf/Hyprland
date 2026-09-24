@@ -1456,44 +1456,11 @@ static std::string dispatchGetProp(eHyprCtlOutputFormat format, std::string requ
     };
 
     auto borderColorToString = [&](bool active) -> std::string {
-        static auto PACTIVECOL              = CConfigValue<Config::IComplexConfigValue>("general:col.active_border");
-        static auto PINACTIVECOL            = CConfigValue<Config::IComplexConfigValue>("general:col.inactive_border");
-        static auto PNOGROUPACTIVECOL       = CConfigValue<Config::IComplexConfigValue>("general:col.nogroup_border_active");
-        static auto PNOGROUPINACTIVECOL     = CConfigValue<Config::IComplexConfigValue>("general:col.nogroup_border");
-        static auto PGROUPACTIVECOL         = CConfigValue<Config::IComplexConfigValue>("group:col.border_active");
-        static auto PGROUPINACTIVECOL       = CConfigValue<Config::IComplexConfigValue>("group:col.border_inactive");
-        static auto PGROUPACTIVELOCKEDCOL   = CConfigValue<Config::IComplexConfigValue>("group:col.border_locked_active");
-        static auto PGROUPINACTIVELOCKEDCOL = CConfigValue<Config::IComplexConfigValue>("group:col.border_locked_inactive");
-
-        const bool  GROUPLOCKED = PWINDOW->grouping().group() ? PWINDOW->grouping().group()->locked() : false;
-
-        if (active) {
-            auto* const       ACTIVECOL            = (Config::CGradientValueData*)(PACTIVECOL.ptr());
-            auto* const       NOGROUPACTIVECOL     = (Config::CGradientValueData*)(PNOGROUPACTIVECOL.ptr());
-            auto* const       GROUPACTIVECOL       = (Config::CGradientValueData*)(PGROUPACTIVECOL.ptr());
-            auto* const       GROUPACTIVELOCKEDCOL = (Config::CGradientValueData*)(PGROUPACTIVELOCKEDCOL.ptr());
-            const auto* const ACTIVECOLOR          = !PWINDOW->grouping().group() ? (!(PWINDOW->grouping().rules() & Desktop::View::GROUP_DENY) ? ACTIVECOL : NOGROUPACTIVECOL) :
-                                                                                    (GROUPLOCKED ? GROUPACTIVELOCKEDCOL : GROUPACTIVECOL);
-
-            std::string       borderColorString = PWINDOW->m_ruleApplicator->activeBorderColor().valueOr(*ACTIVECOLOR).toString();
-            if (FORMNORM)
-                return borderColorString;
-            else
-                return std::format(R"({{"{}": "{}"}})", PROP, borderColorString);
-        } else {
-            auto* const       INACTIVECOL            = (Config::CGradientValueData*)(PINACTIVECOL.ptr());
-            auto* const       NOGROUPINACTIVECOL     = (Config::CGradientValueData*)(PNOGROUPINACTIVECOL.ptr());
-            auto* const       GROUPINACTIVECOL       = (Config::CGradientValueData*)(PGROUPINACTIVECOL.ptr());
-            auto* const       GROUPINACTIVELOCKEDCOL = (Config::CGradientValueData*)(PGROUPINACTIVELOCKEDCOL.ptr());
-            const auto* const INACTIVECOLOR = !PWINDOW->grouping().group() ? (!(PWINDOW->grouping().rules() & Desktop::View::GROUP_DENY) ? INACTIVECOL : NOGROUPINACTIVECOL) :
-                                                                             (GROUPLOCKED ? GROUPINACTIVELOCKEDCOL : GROUPINACTIVECOL);
-
-            std::string       borderColorString = PWINDOW->m_ruleApplicator->inactiveBorderColor().valueOr(*INACTIVECOLOR).toString();
-            if (FORMNORM)
-                return borderColorString;
-            else
-                return std::format(R"({{"{}": "{}"}})", PROP, borderColorString);
-        }
+        std::string borderColorString = getWindowBorderColor(PWINDOW, active).toString();
+        if (FORMNORM)
+            return borderColorString;
+        else
+            return std::format(R"({{"{}": "{}"}})", PROP, borderColorString);
     };
 
     auto windowPropToString = [&](auto& prop) -> std::string {
