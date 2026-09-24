@@ -159,41 +159,12 @@ void CHyprBorderDecoration::initializeAnimations() {
 }
 
 void CHyprBorderDecoration::updateState() {
-    static auto PACTIVECOL              = CConfigValue<Config::IComplexConfigValue>("general:col.active_border");
-    static auto PINACTIVECOL            = CConfigValue<Config::IComplexConfigValue>("general:col.inactive_border");
-    static auto PNOGROUPACTIVECOL       = CConfigValue<Config::IComplexConfigValue>("general:col.nogroup_border_active");
-    static auto PNOGROUPINACTIVECOL     = CConfigValue<Config::IComplexConfigValue>("general:col.nogroup_border");
-    static auto PGROUPACTIVECOL         = CConfigValue<Config::IComplexConfigValue>("group:col.border_active");
-    static auto PGROUPINACTIVECOL       = CConfigValue<Config::IComplexConfigValue>("group:col.border_inactive");
-    static auto PGROUPACTIVELOCKEDCOL   = CConfigValue<Config::IComplexConfigValue>("group:col.border_locked_active");
-    static auto PGROUPINACTIVELOCKEDCOL = CConfigValue<Config::IComplexConfigValue>("group:col.border_locked_inactive");
-
-    const auto  PWINDOW = m_window.lock();
+    const auto PWINDOW = m_window.lock();
     if (!PWINDOW)
         return;
 
     invalidateBorderSize();
-
-    auto* const ACTIVECOL              = sc<Config::CGradientValueData*>(PACTIVECOL.ptr());
-    auto* const INACTIVECOL            = sc<Config::CGradientValueData*>(PINACTIVECOL.ptr());
-    auto* const NOGROUPACTIVECOL       = sc<Config::CGradientValueData*>(PNOGROUPACTIVECOL.ptr());
-    auto* const NOGROUPINACTIVECOL     = sc<Config::CGradientValueData*>(PNOGROUPINACTIVECOL.ptr());
-    auto* const GROUPACTIVECOL         = sc<Config::CGradientValueData*>(PGROUPACTIVECOL.ptr());
-    auto* const GROUPINACTIVECOL       = sc<Config::CGradientValueData*>(PGROUPINACTIVECOL.ptr());
-    auto* const GROUPACTIVELOCKEDCOL   = sc<Config::CGradientValueData*>(PGROUPACTIVELOCKEDCOL.ptr());
-    auto* const GROUPINACTIVELOCKEDCOL = sc<Config::CGradientValueData*>(PGROUPINACTIVELOCKEDCOL.ptr());
-
-    const bool GROUPLOCKED = PWINDOW->grouping().group() ? PWINDOW->grouping().group()->locked() || Desktop::windowState()->groupsLocked() : Desktop::windowState()->groupsLocked();
-    if (PWINDOW == Desktop::focusState()->window()) {
-        const auto* const ACTIVECOLOR = !PWINDOW->grouping().group() ? (!(PWINDOW->grouping().rules() & Desktop::View::GROUP_DENY) ? ACTIVECOL : NOGROUPACTIVECOL) :
-                                                                       (GROUPLOCKED ? GROUPACTIVELOCKEDCOL : GROUPACTIVECOL);
-        m_gradient.setTarget(PWINDOW->m_ruleApplicator->activeBorderColor().valueOr(*ACTIVECOLOR));
-        return;
-    }
-
-    const auto* const INACTIVECOLOR = !PWINDOW->grouping().group() ? (!(PWINDOW->grouping().rules() & Desktop::View::GROUP_DENY) ? INACTIVECOL : NOGROUPINACTIVECOL) :
-                                                                     (GROUPLOCKED ? GROUPINACTIVELOCKEDCOL : GROUPINACTIVECOL);
-    m_gradient.setTarget(PWINDOW->m_ruleApplicator->inactiveBorderColor().valueOr(*INACTIVECOLOR));
+    m_gradient.setTarget(getWindowBorderColor(PWINDOW, PWINDOW == Desktop::focusState()->window()));
 }
 
 void CHyprBorderDecoration::onWindowMap() {
