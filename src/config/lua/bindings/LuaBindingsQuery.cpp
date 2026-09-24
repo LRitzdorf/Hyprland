@@ -447,6 +447,121 @@ static int hlGetCurrentSubmap(lua_State* L) {
     return 1;
 }
 
+static int hlGetProp(lua_State* L) {
+    const auto PROP       = Internal::requireTableFieldStr(L, -1, "prop", "hl.get_prop");
+    const auto PWINDOWSEL = Internal::requireTableFieldWindowSelector(L, -1, "window", "hl.get_prop");
+    const auto PWINDOW    = Desktop::viewState()->query().selector(PWINDOWSEL).runWindow();
+    if (!PWINDOW) {
+        lua_pushstring(L, "window not found");
+        return 1;
+    }
+
+    if (PROP == "animation")
+        return PWINDOW->m_ruleApplicator->animationStyle().valueOr("(unset)");
+    else if (PROP == "max_size") {
+        const auto sizeValue = PWINDOW->m_ruleApplicator->minSize().valueOr(Vector2D(MIN_WINDOW_SIZE, MIN_WINDOW_SIZE));
+        lua_newtable(L);
+        lua_pushinteger(L, sizeValue.x);
+        lua_setfield(L, -2, "x");
+        lua_pushinteger(L, sizeValue.y);
+        lua_setfield(L, -2, "y");
+    } else if (PROP == "min_size") {
+        const auto sizeValue = PWINDOW->m_ruleApplicator->maxSize().valueOr(Vector2D(INFINITY, INFINITY));
+        lua_newtable(L);
+        lua_pushinteger(L, sizeValue.x);
+        lua_setfield(L, -2, "x");
+        lua_pushinteger(L, sizeValue.y);
+        lua_setfield(L, -2, "y");
+    } else if (PROP == "opacity")
+        lua_pushnumber(L, PWINDOW->m_ruleApplicator->alpha().valueOrDefault().alpha);
+    else if (PROP == "opacity_inactive")
+        lua_pushnumber(L, PWINDOW->m_ruleApplicator->alphaInactive().valueOrDefault().alpha);
+    else if (PROP == "opacity_fullscreen")
+        lua_pushnumber(L, PWINDOW->m_ruleApplicator->alphaFullscreen().valueOrDefault().alpha);
+    else if (PROP == "opacity_override")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->alpha().valueOrDefault().overridden);
+    else if (PROP == "opacity_inactive_override")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->alphaInactive().valueOrDefault().overridden);
+    else if (PROP == "opacity_fullscreen_override")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->alphaFullscreen().valueOrDefault().overridden);
+    else if (PROP == "active_border_color") {
+        const auto color = getWindowBorderColor(PWINDOW, true);
+        lua_pushstring(std::format("#{:02x}{:02x}{:02x}{:02x}", color.r, color.g, color.b, color.a));
+    } else if (PROP == "inactive_border_color") {
+        const auto color = getWindowBorderColor(PWINDOW, false);
+        lua_pushstring(std::format("#{:02x}{:02x}{:02x}{:02x}", color.r, color.g, color.b, color.a));
+    } else if (PROP == "allows_input")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->allowsInput().valueOrDefault());
+    else if (PROP == "decorate")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->decorate().valueOrDefault());
+    else if (PROP == "focus_on_activate")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->focusOnActivate().valueOrDefault());
+    else if (PROP == "keep_aspect_ratio")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->keepAspectRatio().valueOrDefault());
+    else if (PROP == "nearest_neighbor")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->nearestNeighbor().valueOrDefault());
+    else if (PROP == "no_anim")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->noAnim().valueOrDefault());
+    else if (PROP == "no_blur")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->noBlur().valueOrDefault());
+    else if (PROP == "no_dim")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->noDim().valueOrDefault());
+    else if (PROP == "no_focus")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->noFocus().valueOrDefault());
+    else if (PROP == "no_max_size")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->noMaxSize().valueOrDefault());
+    else if (PROP == "no_shadow")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->noShadow().valueOrDefault());
+    else if (PROP == "no_glow")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->noGlow().valueOrDefault());
+    else if (PROP == "no_wobble")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->noWobble().valueOrDefault());
+    else if (PROP == "no_shortcuts_inhibit")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->noShortcutsInhibit().valueOrDefault());
+    else if (PROP == "opaque")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->opaque().valueOrDefault());
+    else if (PROP == "dim_around")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->dimAround().valueOrDefault());
+    else if (PROP == "force_rgbx")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->RGBX().valueOrDefault());
+    else if (PROP == "sync_fullscreen")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->syncFullscreen().valueOrDefault());
+    else if (PROP == "immediate")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->tearing().valueOrDefault());
+    else if (PROP == "xray")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->xray().valueOrDefault());
+    else if (PROP == "render_unfocused")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->renderUnfocused().valueOrDefault());
+    else if (PROP == "no_follow_mouse")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->noFollowMouse().valueOrDefault());
+    else if (PROP == "no_screen_share")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->noScreenShare().valueOrDefault());
+    else if (PROP == "no_vrr")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->noVRR().valueOrDefault());
+    else if (PROP == "no_auto_hdr")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->noAutoHDR().valueOrDefault());
+    else if (PROP == "persistent_size")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->persistentSize().valueOrDefault());
+    else if (PROP == "stay_focused")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->stayFocused().valueOrDefault());
+    else if (PROP == "idle_inhibit")
+        lua_pushboolean(L, PWINDOW->m_ruleApplicator->idleInhibitMode().valueOrDefault());
+    else if (PROP == "border_size")
+        lua_pushnumber(L, PWINDOW->m_ruleApplicator->borderSize().valueOrDefault());
+    else if (PROP == "rounding")
+        lua_pushnumber(L, PWINDOW->m_ruleApplicator->rounding().valueOrDefault());
+    else if (PROP == "rounding_power")
+        lua_pushnumber(L, PWINDOW->m_ruleApplicator->roundingPower().valueOrDefault());
+    else if (PROP == "scroll_mouse")
+        lua_pushnumber(L, PWINDOW->m_ruleApplicator->scrollMouse().valueOrDefault());
+    else if (PROP == "scroll_touchpad")
+        lua_pushnumber(L, PWINDOW->m_ruleApplicator->scrollTouchpad().valueOrDefault());
+    else
+        lua_pushstring(L, "prop not found");
+
+    return 1;
+}
+
 void Internal::registerQueryBindings(lua_State* L) {
     Internal::setFn(L, "get_devices", hlGetDevices);
     Internal::setFn(L, "get_windows", hlGetWindows);
@@ -468,4 +583,5 @@ void Internal::registerQueryBindings(lua_State* L) {
     Internal::setFn(L, "get_last_window", hlGetLastWindow);
     Internal::setFn(L, "get_last_workspace", hlGetLastWorkspace);
     Internal::setFn(L, "get_current_submap", hlGetCurrentSubmap);
+    Internal::setFn(L, "get_prop", hlGetProp);
 }
