@@ -43,6 +43,7 @@ class CTrackpadGestures {
     Vector2D                      m_currentTotalDelta = {};
     SP<SGestureData>              m_activeGesture     = nullptr;
     bool                          m_gestureFindFailed = false;
+    bool                          m_natural           = false;
 };
 
 inline UP<CTrackpadGestures> g_pTrackpadGestures = makeUnique<CTrackpadGestures>();
