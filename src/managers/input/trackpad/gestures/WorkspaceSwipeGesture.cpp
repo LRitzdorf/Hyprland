@@ -48,10 +48,9 @@ void CWorkspaceSwipeGesture::update(const ITrackpadGesture::STrackpadGestureUpda
     if (!m_sessionID || m_sessionID != g_pUnifiedWorkspaceSwipe->sessionID())
         return;
 
+    // TODO: simplify this once workspace_swipe_invert is gone, just delta + distance(e)
     const float  DELTA = distance(e);
-
     static auto  PSWIPEINVR = CConfigValue<Config::INTEGER>("gestures:workspace_swipe_invert");
-
     const double D = g_pUnifiedWorkspaceSwipe->m_delta + (*PSWIPEINVR ? -DELTA : DELTA);
     g_pUnifiedWorkspaceSwipe->update(D);
 }
