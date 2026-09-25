@@ -403,6 +403,8 @@ std::vector<SP<IValue>> Values::getConfigValues() {
 
         MS<Bool>("input:touchpad:disable_while_typing", "Disable the touchpad while typing.", true, {.refresh = Supplementary::REFRESH_INPUT_DEVICES}),
         MS<Bool>("input:touchpad:natural_scroll", "Inverts scrolling direction.", false, {.refresh = Supplementary::REFRESH_INPUT_DEVICES}),
+        MS<Bool>("input:touchpad:natural_gestures", "Inverts direction for generic swipe gestures (horizontal/vertical/swipe).", true,
+                  {.refresh = Supplementary::REFRESH_INPUT_DEVICES}),
         MS<Float>("input:touchpad:scroll_factor", "Multiplier applied to the amount of scroll movement.", 1,
                   {.min = 0, .max = 100, .refresh = Supplementary::REFRESH_INPUT_DEVICES}),
         MS<Bool>("input:touchpad:middle_button_emulation", "Sending LMB and RMB simultaneously will be interpreted as a middle click.", false,
@@ -483,7 +485,8 @@ std::vector<SP<IValue>> Values::getConfigValues() {
 
         MS<Int>("gestures:workspace_swipe_distance", "in px, the distance of the touchpad gesture", 300, {.min = 0, .max = 2000}),
         MS<Bool>("gestures:workspace_swipe_touch", "enable workspace swiping from the edge of a touchscreen", false),
-        MS<Bool>("gestures:workspace_swipe_invert", "invert the direction (touchpad only)", true),
+        MS<Bool>("gestures:workspace_swipe_invert", "invert the direction (touchpad only)", false,
+                  {.deprecationNotice = "Use input:touchpad:natural_gestures instead, applies to all touchpad gestures instead of just workspace"}),
         MS<Bool>("gestures:workspace_swipe_touch_invert", "invert the direction (touchscreen only)", false),
         MS<Int>("gestures:workspace_swipe_min_speed_to_force", "minimum speed in px per timepoint to force the change ignoring cancel_ratio.", 30, {.min = 0, .max = 200}),
         MS<Float>("gestures:workspace_swipe_cancel_ratio", "how much the swipe has to proceed in order to commence it.", 0.5, {.min = 0, .max = 1}),
