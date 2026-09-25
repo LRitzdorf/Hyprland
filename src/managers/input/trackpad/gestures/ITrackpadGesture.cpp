@@ -12,19 +12,37 @@ void ITrackpadGesture::begin(const STrackpadGestureBegin& e) {
 }
 
 float ITrackpadGesture::distance(const STrackpadGestureBegin& e) {
-    if (e.direction == TRACKPAD_GESTURE_DIR_LEFT || e.direction == TRACKPAD_GESTURE_DIR_RIGHT || e.direction == TRACKPAD_GESTURE_DIR_HORIZONTAL)
-        return m_scale * (e.direction == TRACKPAD_GESTURE_DIR_LEFT ? -e.swipe->delta.x : e.swipe->delta.x);
-    if (e.direction == TRACKPAD_GESTURE_DIR_UP || e.direction == TRACKPAD_GESTURE_DIR_DOWN || e.direction == TRACKPAD_GESTURE_DIR_VERTICAL)
-        return m_scale * (e.direction == TRACKPAD_GESTURE_DIR_UP ? -e.swipe->delta.y : e.swipe->delta.y);
-    if (e.direction == TRACKPAD_GESTURE_DIR_SWIPE)
-        return m_scale * (m_naturalScroll ? -e.swipe->delta.size() : e.swipe->delta.size());
-    if (e.direction == TRACKPAD_GESTURE_DIR_PINCH || e.direction == TRACKPAD_GESTURE_DIR_PINCH_IN || e.direction == TRACKPAD_GESTURE_DIR_PINCH_OUT) {
-        const auto Δ     = m_lastPinchScale - e.pinch->scale;
-        m_lastPinchScale = e.pinch->scale;
-        return m_scale * ((e.direction == TRACKPAD_GESTURE_DIR_PINCH_IN ? -Δ : Δ * PINCH_DELTA_SCALE_OUT_ADD) * PINCH_DELTA_SCALE);
+    switch (e.direction) {
+        case TRACKPAD_GESTURE_DIR_LEFT:
+            return m_scale * -e.swipe->delta.x;
+        case TRACKPAD_GESTURE_DIR_RIGHT:
+            return m_scale * e.swipe->delta.x;
+        case TRACKPAD_GESTURE_DIR_HORIZONTAL:
+            return m_scale * e.swipe->delta.x * (m_natural ? -1 : 1);
+        case TRACKPAD_GESTURE_DIR_UP:
+            return m_scale * -e.swipe->delta.y;
+        case TRACKPAD_GESTURE_DIR_DOWN:
+            return m_scale * e.swipe->delta.y;
+        case TRACKPAD_GESTURE_DIR_VERTICAL:
+            return m_scale * e.swipe->delta.y * (m_natural ? -1 : 1);
+        case TRACKPAD_GESTURE_DIR_SWIPE:
+            return m_scale * e.swipe->delta.size() * (m_natural ? -1 : 1);
+        case TRACKPAD_GESTURE_DIR_PINCH:
+        case TRACKPAD_GESTURE_DIR_PINCH_OUT:
+            {
+                const auto Δ     = m_lastPinchScale - e.pinch->scale;
+                m_lastPinchScale = e.pinch->scale;
+                return m_scale * Δ * PINCH_DELTA_SCALE * PINCH_DELTA_SCALE_OUT_ADD;
+            }
+        case TRACKPAD_GESTURE_DIR_PINCH_IN:
+            {
+                const auto Δ     = e.pinch->scale - m_lastPinchScale;
+                m_lastPinchScale = e.pinch->scale;
+                return m_scale * Δ * PINCH_DELTA_SCALE;
+            }
+        default:
+            return m_scale * (e.swipe ? e.swipe->delta.size() : e.pinch->delta.size());
     }
-
-    return m_scale * (e.swipe ? e.swipe->delta.size() : e.pinch->delta.size());
 }
 
 float ITrackpadGesture::distance(const STrackpadGestureUpdate& e) {
