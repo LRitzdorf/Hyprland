@@ -111,6 +111,7 @@ void CTrackpadGestures::gestureBegin(const IPointer::SSwipeBeginEvent& e) {
         return;
     }
 
+    m_natural           = e.natural;
     m_gestureFindFailed = false;
     m_currentTotalDelta = {};
 
@@ -159,7 +160,7 @@ void CTrackpadGestures::gestureUpdate(const IPointer::SSwipeUpdateEvent& e) {
 
             m_activeGesture     = g;
             g->currentDirection = g->gesture->isDirectionSensitive() ? g->direction : direction;
-            m_activeGesture->gesture->begin({.swipe = &e, .direction = direction, .scale = g->deltaScale});
+            m_activeGesture->gesture->begin({.swipe = &e, .direction = direction, .scale = g->deltaScale, .natural = m_natural});
             break;
         }
 

@@ -1,5 +1,7 @@
 #include "Mouse.hpp"
 #include "../defines.hpp"
+#include "../config/ConfigManager.hpp"
+#include "../config/ConfigValue.hpp"
 #include <aquamarine/input/Input.hpp>
 
 SP<CMouse> CMouse::create(SP<Aquamarine::IPointer> mouse) {
@@ -71,6 +73,7 @@ CMouse::CMouse(SP<Aquamarine::IPointer> mouse_) : m_mouse(mouse_) {
         m_pointerEvents.swipeBegin.emit(SSwipeBeginEvent{
             .timeMs  = event.timeMs,
             .fingers = event.fingers,
+            .natural = Config::mgr()->getDeviceInt(m_hlName, "natural_gestures", "input:touchpad:natural_gestures"),
         });
     });
 

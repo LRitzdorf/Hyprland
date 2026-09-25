@@ -240,6 +240,7 @@ namespace {
         {"repeat_rate", []() -> ILuaConfigValue* { return new CLuaConfigInt(25, 0, 200); }},
         {"repeat_delay", []() -> ILuaConfigValue* { return new CLuaConfigInt(600, 0, 2000); }},
         {"natural_scroll", []() -> ILuaConfigValue* { return new CLuaConfigBool(false); }},
+        {"natural_gestures", []() -> ILuaConfigValue* { return new CLuaConfigBool(true); }},
         {"tap_button_map", []() -> ILuaConfigValue* { return new CLuaConfigString(STRVAL_EMPTY); }},
         {"numlock_by_default", []() -> ILuaConfigValue* { return new CLuaConfigBool(false); }},
         {"resolve_binds_by_sym", []() -> ILuaConfigValue* { return new CLuaConfigBool(false); }},

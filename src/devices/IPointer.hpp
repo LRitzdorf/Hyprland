@@ -52,6 +52,7 @@ class IPointer : public IHID {
     struct SSwipeBeginEvent {
         uint32_t timeMs  = 0;
         uint32_t fingers = 0;
+        bool     natural = false;
     };
 
     struct SSwipeUpdateEvent {

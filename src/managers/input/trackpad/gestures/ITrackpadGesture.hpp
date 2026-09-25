@@ -13,6 +13,7 @@ class ITrackpadGesture {
         const IPointer::SPinchUpdateEvent* pinch     = nullptr;
         eTrackpadGestureDirection          direction = TRACKPAD_GESTURE_DIR_NONE;
         float                              scale     = 1.F;
+        bool                               natural   = false;
     };
 
     struct STrackpadGestureUpdate {
@@ -40,4 +41,5 @@ class ITrackpadGesture {
 
   protected:
     float m_lastPinchScale = 1.F, m_scale = 1.F;
+    bool  m_natural        = false;
 };
