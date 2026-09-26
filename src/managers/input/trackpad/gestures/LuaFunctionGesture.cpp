@@ -31,16 +31,18 @@ static void pushVec2(lua_State* L, const Vector2D& vec) {
     lua_setfield(L, -2, "y");
 }
 
-static void pushGestureBase(lua_State* L, const char* phase, eTrackpadGestureDirection direction) {
+static void pushGestureBase(lua_State* L, const char* phase, eTrackpadGestureDirection direction, bool natural) {
     lua_newtable(L);
     lua_pushstring(L, phase);
     lua_setfield(L, -2, "phase");
     lua_pushstring(L, directionToString(direction));
     lua_setfield(L, -2, "direction");
+    lua_pushboolean(L, natural);
+    lua_setfield(L, -2, "natural");
 }
 
-static int pushGestureEvent(lua_State* L, const ITrackpadGesture::STrackpadGestureBegin& e) {
-    pushGestureBase(L, "start", e.direction);
+static int pushGestureEvent(lua_State* L, const ITrackpadGesture::STrackpadGestureBegin& e, bool natural) {
+    pushGestureBase(L, "start", e.direction, natural);
 
     if (e.swipe) {
         lua_pushstring(L, "swipe");
@@ -69,8 +71,8 @@ static int pushGestureEvent(lua_State* L, const ITrackpadGesture::STrackpadGestu
     return 1;
 }
 
-static int pushGestureEvent(lua_State* L, const ITrackpadGesture::STrackpadGestureUpdate& e) {
-    pushGestureBase(L, "update", e.direction);
+static int pushGestureEvent(lua_State* L, const ITrackpadGesture::STrackpadGestureUpdate& e, bool natural) {
+    pushGestureBase(L, "update", e.direction, natural);
 
     if (e.swipe) {
         lua_pushstring(L, "swipe");
@@ -99,8 +101,8 @@ static int pushGestureEvent(lua_State* L, const ITrackpadGesture::STrackpadGestu
     return 1;
 }
 
-static int pushGestureEvent(lua_State* L, const ITrackpadGesture::STrackpadGestureEnd& e) {
-    pushGestureBase(L, "end", e.direction);
+static int pushGestureEvent(lua_State* L, const ITrackpadGesture::STrackpadGestureEnd& e, bool natural) {
+    pushGestureBase(L, "end", e.direction, natural);
 
     if (e.swipe) {
         lua_pushstring(L, "swipe");
@@ -136,7 +138,7 @@ void CLuaFunctionGesture::begin(const ITrackpadGesture::STrackpadGestureBegin& e
     if (!MGR)
         return;
 
-    MGR->callLuaFn(m_luaStartFnId, [&](lua_State* L) { return pushGestureEvent(L, e); }, Config::Lua::CConfigManager::LUA_TIMEOUT_EVENT_CALLBACK_MS, "gesture start callback");
+    MGR->callLuaFn(m_luaStartFnId, [&](lua_State* L) { return pushGestureEvent(L, e, m_natural); }, Config::Lua::CConfigManager::LUA_TIMEOUT_EVENT_CALLBACK_MS, "gesture start callback");
 }
 
 void CLuaFunctionGesture::update(const ITrackpadGesture::STrackpadGestureUpdate& e) {
@@ -144,7 +146,7 @@ void CLuaFunctionGesture::update(const ITrackpadGesture::STrackpadGestureUpdate&
     if (!MGR)
         return;
 
-    MGR->callLuaFn(m_luaUpdateFnId, [&](lua_State* L) { return pushGestureEvent(L, e); }, Config::Lua::CConfigManager::LUA_TIMEOUT_EVENT_CALLBACK_MS, "gesture update callback");
+    MGR->callLuaFn(m_luaUpdateFnId, [&](lua_State* L) { return pushGestureEvent(L, e, m_natural); }, Config::Lua::CConfigManager::LUA_TIMEOUT_EVENT_CALLBACK_MS, "gesture update callback");
 }
 
 void CLuaFunctionGesture::end(const ITrackpadGesture::STrackpadGestureEnd& e) {
@@ -155,5 +157,5 @@ void CLuaFunctionGesture::end(const ITrackpadGesture::STrackpadGestureEnd& e) {
     if (m_legacyEndOnly)
         MGR->callLuaFn(m_luaEndFnId);
     else
-        MGR->callLuaFn(m_luaEndFnId, [&](lua_State* L) { return pushGestureEvent(L, e); }, Config::Lua::CConfigManager::LUA_TIMEOUT_EVENT_CALLBACK_MS, "gesture end callback");
+        MGR->callLuaFn(m_luaEndFnId, [&](lua_State* L) { return pushGestureEvent(L, e, m_natural); }, Config::Lua::CConfigManager::LUA_TIMEOUT_EVENT_CALLBACK_MS, "gesture end callback");
 }
