@@ -159,7 +159,6 @@ void CTrackpadGestures::gestureUpdate(const IPointer::SSwipeUpdateEvent& e) {
                 continue;
 
             m_activeGesture     = g;
-            g->currentDirection = g->gesture->isDirectionSensitive() ? g->direction : direction;
             m_activeGesture->gesture->begin({.swipe = &e, .direction = direction, .scale = g->deltaScale, .natural = m_natural});
             break;
         }
@@ -170,7 +169,7 @@ void CTrackpadGestures::gestureUpdate(const IPointer::SSwipeUpdateEvent& e) {
         }
     }
 
-    m_activeGesture->gesture->update({.swipe = &e, .direction = m_activeGesture->currentDirection, .scale = m_activeGesture->deltaScale});
+    m_activeGesture->gesture->update({.swipe = &e, .direction = m_activeGesture->direction, .scale = m_activeGesture->deltaScale});
 }
 
 void CTrackpadGestures::gestureEnd(const IPointer::SSwipeEndEvent& e) {
@@ -227,7 +226,6 @@ void CTrackpadGestures::gestureUpdate(const IPointer::SPinchUpdateEvent& e) {
                 continue;
 
             m_activeGesture     = g;
-            g->currentDirection = g->gesture->isDirectionSensitive() ? g->direction : direction;
             m_activeGesture->gesture->begin({.pinch = &e, .direction = direction, .scale = g->deltaScale});
             break;
         }
@@ -238,7 +236,7 @@ void CTrackpadGestures::gestureUpdate(const IPointer::SPinchUpdateEvent& e) {
         }
     }
 
-    m_activeGesture->gesture->update({.pinch = &e, .direction = m_activeGesture->currentDirection, .scale = m_activeGesture->deltaScale});
+    m_activeGesture->gesture->update({.pinch = &e, .direction = m_activeGesture->direction, .scale = m_activeGesture->deltaScale});
 }
 
 void CTrackpadGestures::gestureEnd(const IPointer::SPinchEndEvent& e) {

@@ -65,7 +65,7 @@ void CScrollMoveTrackpadGesture::update(const ITrackpadGesture::STrackpadGesture
     const double NORMALIZED_DELTA        = DELTA / PRIMARY;
     const double NORMALIZED_OFFSET_DELTA = -NORMALIZED_DELTA;
 
-    SCROLLING->moveTapeNormalized(NORMALIZED_DELTA);
+    SCROLLING->moveTapeNormalized(NORMALIZED_OFFSET_DELTA);
 
     if (!e.swipe)
         return;
