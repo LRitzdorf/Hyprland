@@ -149,7 +149,7 @@ TEST_CASE(live_gesture_callbacks) {
                     __liveGesture.pinch.update = __liveGesture.pinch.update + 1
                     expect_eq(e.phase, 'update', 'pinch update phase')
                     expect_eq(e.type, 'pinch', 'pinch update type')
-                    expect_eq(e.direction, 'PINCH_IN', 'pinch update direction')
+                    expect_eq(e.direction, 'PINCH', 'pinch update direction')
                     expect_eq(e.fingers, 7, 'pinch update fingers')
                     __liveGesture.pinch.last_scale = e.scale
                     __liveGesture.pinch.last_rotation = e.rotation
