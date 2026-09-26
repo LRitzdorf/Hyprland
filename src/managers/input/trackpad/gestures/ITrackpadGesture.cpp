@@ -53,7 +53,3 @@ float ITrackpadGesture::distance(const STrackpadGestureUpdate& e) {
         .scale     = e.scale,
     });
 }
-
-bool ITrackpadGesture::isDirectionSensitive() {
-    return false;
-}
