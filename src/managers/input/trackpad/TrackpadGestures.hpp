@@ -35,7 +35,6 @@ class CTrackpadGestures {
         eTrackpadGestureDirection direction        = TRACKPAD_GESTURE_DIR_NONE; // configured dir
         float                     deltaScale       = 1.F;
         bool                      disableInhibit   = false;
-        eTrackpadGestureDirection currentDirection = TRACKPAD_GESTURE_DIR_NONE; // actual dir of that select swipe
     };
 
     std::vector<SP<SGestureData>> m_gestures;
