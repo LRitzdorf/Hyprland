@@ -235,14 +235,14 @@ TEST_CASE(gestures) {
 
     OK(getFromSocket("/eval hl.plugin.test.alt(1)"));
 
-    OK(getFromSocket("/eval hl.plugin.test.gesture('left', 3)"));
+    OK(getFromSocket("/eval hl.plugin.test.gesture('left', 3, 'natural')"));
 
     {
         auto str = getFromSocket("/workspaces");
         EXPECT_CONTAINS(str, "workspace 2 (2)");
     }
 
-    OK(getFromSocket("/eval hl.plugin.test.gesture('right', 3)"));
+    OK(getFromSocket("/eval hl.plugin.test.gesture('right', 3, 'natural')"));
 
     {
         auto str = getFromSocket("/workspaces");
@@ -250,14 +250,12 @@ TEST_CASE(gestures) {
     }
 
     // check for crashes
-    OK(getFromSocket("/eval hl.plugin.test.gesture('right', 3)"));
+    OK(getFromSocket("/eval hl.plugin.test.gesture('right', 3, 'natural')"));
 
     {
         auto str = getFromSocket("/workspaces");
         EXPECT_NOT_CONTAINS(str, "workspace 2 (2)");
     }
-
-    OK(getFromSocket("/eval hl.config({ input = { touchpad = { natural_gestures = false } } })"));
 
     OK(getFromSocket("/eval hl.plugin.test.gesture('right', 3)"));
 
@@ -273,7 +271,6 @@ TEST_CASE(gestures) {
         EXPECT_NOT_CONTAINS(str, "workspace 2 (2)");
     }
 
-    OK(getFromSocket("/eval hl.config({ input = { touchpad = { natural_gestures = true } } })"));
     OK(getFromSocket("/eval hl.config({ gestures = { workspace_swipe_create_new = 0 } })"));
 
     OK(getFromSocket("/eval hl.plugin.test.gesture('left', 3)"));
@@ -311,7 +308,6 @@ TEST_CASE(gestures) {
 
     // Test that `workspace previous` works correctly after a workspace gesture.
     {
-        OK(getFromSocket("/eval hl.config({ input = { touchpad = { natural_gestures = false } } })"));
         OK(getFromSocket("/eval hl.config({ gestures = { workspace_swipe_create_new = 1 } })"));
         OK(getFromSocket("/dispatch hl.dsp.focus({ workspace = '3' })"));
 
