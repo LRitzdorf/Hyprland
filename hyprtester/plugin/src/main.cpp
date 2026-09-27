@@ -901,21 +901,26 @@ static SDispatchResult simulateGesture(std::string in) {
     try {
         fingers = std::stoul(data[1]);
     } catch (...) { return {.success = false}; }
+    // extras
+    bool natural = false;
+    if (data.size() >= 3) {
+        if (data[2] == "natural") natural = true;
+    }
 
     if (data[0] == "down") {
-        g_pTrackpadGestures->gestureBegin(IPointer::SSwipeBeginEvent{});
+        g_pTrackpadGestures->gestureBegin(IPointer::SSwipeBeginEvent{.natural = natural});
         g_pTrackpadGestures->gestureUpdate(IPointer::SSwipeUpdateEvent{.fingers = fingers, .delta = {0, 300}});
         g_pTrackpadGestures->gestureEnd(IPointer::SSwipeEndEvent{});
     } else if (data[0] == "up") {
-        g_pTrackpadGestures->gestureBegin(IPointer::SSwipeBeginEvent{});
+        g_pTrackpadGestures->gestureBegin(IPointer::SSwipeBeginEvent{.natural = natural});
         g_pTrackpadGestures->gestureUpdate(IPointer::SSwipeUpdateEvent{.fingers = fingers, .delta = {0, -300}});
         g_pTrackpadGestures->gestureEnd(IPointer::SSwipeEndEvent{});
     } else if (data[0] == "left") {
-        g_pTrackpadGestures->gestureBegin(IPointer::SSwipeBeginEvent{});
+        g_pTrackpadGestures->gestureBegin(IPointer::SSwipeBeginEvent{.natural = natural});
         g_pTrackpadGestures->gestureUpdate(IPointer::SSwipeUpdateEvent{.fingers = fingers, .delta = {-300, 0}});
         g_pTrackpadGestures->gestureEnd(IPointer::SSwipeEndEvent{});
     } else {
-        g_pTrackpadGestures->gestureBegin(IPointer::SSwipeBeginEvent{});
+        g_pTrackpadGestures->gestureBegin(IPointer::SSwipeBeginEvent{.natural = natural});
         g_pTrackpadGestures->gestureUpdate(IPointer::SSwipeUpdateEvent{.fingers = fingers, .delta = {300, 0}});
         g_pTrackpadGestures->gestureEnd(IPointer::SSwipeEndEvent{});
     }
@@ -1532,7 +1537,8 @@ static int luaAlt(lua_State* L) {
 static int luaGesture(lua_State* L) {
     const auto direction = std::string{luaL_checkstring(L, 1)};
     const auto fingers   = (int)luaL_optinteger(L, 2, 3);
-    return luaResult(L, ::simulateGesture(std::format("{},{}", direction, fingers)));
+    const auto extras    = luaL_optstring(L, 3, "");
+    return luaResult(L, ::simulateGesture(std::format("{},{},{}", direction, fingers, extras)));
 }
 
 static int luaPinchUpdate(lua_State* L) {
