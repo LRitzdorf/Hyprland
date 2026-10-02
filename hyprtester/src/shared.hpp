@@ -196,32 +196,32 @@ inline std::map<std::string, std::shared_ptr<CTestCase>> testCases;
 // since `haystack` may be a large multi-line string. Thus, they use bare `NLog::log` + `MARK_TEST_FAILED_SILENT`.
 
 #define EXPECT_CONTAINS(haystack, needle)                                                                                                                                          \
-    if (const auto ASSERTED = needle; !std::string{haystack}.contains(ASSERTED)) {                                                                                                 \
-        NLog::red("Failed: {}{} should contain {} but doesn't. Source: {}@{}. Haystack is:\n{}", Colors::RESET, #haystack, #needle, __FILE__, __LINE__, std::string{haystack});    \
+    if (const auto HAYSTACK = std::string{haystack}; !HAYSTACK.contains(needle)) {                                                                                                 \
+        NLog::red("Failed: {}{} should contain {} but doesn't. Source: {}@{}. Haystack is:\n{}", Colors::RESET, #haystack, #needle, __FILE__, __LINE__, HAYSTACK);                 \
         MARK_TEST_FAILED_SILENT();                                                                                                                                                 \
     } else {                                                                                                                                                                       \
         LOG_OK("{} contains {}.", #haystack, #needle);                                                                                                                             \
     }
 
 #define EXPECT_NOT_CONTAINS(haystack, needle)                                                                                                                                      \
-    if (std::string{haystack}.contains(needle)) {                                                                                                                                  \
-        NLog::red("Failed: {}{} shouldn't contain {} but does. Source: {}@{}. Haystack is:\n{}", Colors::RESET, #haystack, #needle, __FILE__, __LINE__, std::string{haystack});    \
+    if (const auto HAYSTACK = std::string{haystack}; HAYSTACK.contains(needle)) {                                                                                                  \
+        NLog::red("Failed: {}{} shouldn't contain {} but does. Source: {}@{}. Haystack is:\n{}", Colors::RESET, #haystack, #needle, __FILE__, __LINE__, HAYSTACK);                 \
         MARK_TEST_FAILED_SILENT();                                                                                                                                                 \
     } else {                                                                                                                                                                       \
         LOG_OK("{} doesn't contain {}.", #haystack, #needle);                                                                                                                      \
     }
 
 #define EXPECT_STARTS_WITH(str, what)                                                                                                                                              \
-    if (!std::string{str}.starts_with(what)) {                                                                                                                                     \
-        NLog::red("Failed: {}{} should start with {} but doesn't. Source: {}@{}. String is:\n{}", Colors::RESET, #str, #what, __FILE__, __LINE__, std::string{str});               \
+    if (const auto STR = std::string{str}; !STR.starts_with(what)) {                                                                                                               \
+        NLog::red("Failed: {}{} should start with {} but doesn't. Source: {}@{}. String is:\n{}", Colors::RESET, #str, #what, __FILE__, __LINE__, STR);                            \
         MARK_TEST_FAILED_SILENT();                                                                                                                                                 \
     } else {                                                                                                                                                                       \
         LOG_OK("{} starts with {}.", #str, #what);                                                                                                                                 \
     }
 
 #define EXPECT_COUNT_STRING(str, what, no)                                                                                                                                         \
-    if (Tests::countOccurrences(str, what) != no) {                                                                                                                                \
-        NLog::red("Failed: {}{} should contain {} {} times, but doesn't. Source: {}@{}. String is:\n{}", Colors::RESET, #str, #what, no, __FILE__, __LINE__, std::string{str});    \
+    if (const auto STR = str; Tests::countOccurrences(STR, what) != no) {                                                                                                          \
+        NLog::red("Failed: {}{} should contain {} {} times, but doesn't. Source: {}@{}. String is:\n{}", Colors::RESET, #str, #what, no, __FILE__, __LINE__, STR);                 \
         MARK_TEST_FAILED_SILENT();                                                                                                                                                 \
     } else {                                                                                                                                                                       \
         LOG_OK("{} contains {} {} times.", #str, #what, no);                                                                                                                       \
