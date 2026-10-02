@@ -1177,7 +1177,7 @@ hl.window_rule({
 TEST_CASE(execRulesWorkspaceOverride) {
     OK(getFromSocket("/eval hl.window_rule({ match = { class = 'kitty_exec_override' }, workspace = '2' })"));
 
-    OK(getFromSocket("/dispatch hl.dsp.exec_cmd('[workspace 3] kitty --class kitty_exec_override')"));
+    OK(getFromSocket("/dispatch hl.dsp.exec_cmd('kitty --class kitty_exec_override', { workspace = 3 })"));
 
     Tests::waitUntilWindowsN(1);
 
@@ -1192,7 +1192,7 @@ TEST_CASE(execRulesTagMutation) {
     OK(getFromSocket("/eval hl.window_rule({ match = { class = 'kitty_tag_mutate' }, workspace = '2' })"));
     OK(getFromSocket("/eval hl.window_rule({ match = { class = 'kitty_tag_mutate' }, tag = 'test_tag' })"));
 
-    OK(getFromSocket("/dispatch hl.dsp.exec_cmd('[workspace 3] kitty --class kitty_tag_mutate')"));
+    OK(getFromSocket("/dispatch hl.dsp.exec_cmd('kitty --class kitty_tag_mutate', { workspace = 3 })"));
 
     Tests::waitUntilWindowsN(1);
 
@@ -1217,9 +1217,8 @@ TEST_CASE(execRulesDescendantProcess) {
         EXPECT_CONTAINS(active, "workspace: 2");
     }
 
-    OK(getFromSocket(
-        "/dispatch hl.dsp.exec_cmd('[workspace 3; border_size 7] kitty --class kitty_exec_special & wait', { workspace = 'special:exec_rules silent', no_initial_focus = true, "
-        "no_focus = true })"));
+    OK(getFromSocket("/dispatch hl.dsp.exec_cmd('kitty --class kitty_exec_special & wait', "
+                     "{ workspace = 'special:exec_rules silent', no_initial_focus = true, no_focus = true, border_size = 7 })"));
 
     Tests::waitUntilWindowsN(2);
 
