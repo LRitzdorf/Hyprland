@@ -179,9 +179,11 @@ TEST_CASE(surfaceScaleTransform) {
         client.emplace();
     } catch (const std::exception& e) { FAIL_TEST("Couldn't start the surface scale/transform client: {}", e.what()); }
 
-    ASSERT_CONTAINS(client->command("report"), "root_scale=2");
-    ASSERT_CONTAINS(client->command("report"), "root_fraction=180");
-    ASSERT_CONTAINS(client->command("report"), "root_transform=0");
+    const auto initial = client->command("report");
+    NLog::log("Reported: {}", initial);
+    ASSERT_CONTAINS(initial, "root_scale=2");
+    ASSERT_CONTAINS(initial, "root_fraction=180");
+    ASSERT_CONTAINS(initial, "root_transform=0");
 
     OK(getFromSocket("/eval hl.monitor({ output = 'HEADLESS-2', mode = '1920x1080@60', position = '0x0', scale = '1.5', transform = 1 })"));
     ASSERT_CONTAINS(waitCommandContains(*client, "report", "root_transform=1"), "root_transform=1");
