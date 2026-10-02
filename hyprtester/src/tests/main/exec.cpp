@@ -22,6 +22,16 @@ TEST_CASE(processSpawning) {
         // can't sleep for less than 1 second.
         OK(getFromSocket(std::format("/dispatch hl.dsp.exec_cmd('sleep {}')", duration)));
 
+        // Wait for sleep to spawn (ironic, huh)
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        int i = 0;
+        while (Tests::execAndGet("pgrep sleep").empty()) {
+            i++;
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            if (i > 20)
+                break;
+        }
+
         // Ensure that sleep is our child
         const std::string sleepPidS = Tests::execAndGet("pgrep sleep");
         pid_t             sleepPid;
