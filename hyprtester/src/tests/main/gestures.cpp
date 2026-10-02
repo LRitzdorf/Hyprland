@@ -17,21 +17,6 @@ using namespace Hyprutils::Utils;
 #define UP CUniquePointer
 #define SP CSharedPointer
 
-// TODO: refactor and reuse `Tests::waitUntilWindowsN`
-static bool waitForWindowCount(int expectedWindowCnt, std::string_view expectation, int waitMillis = 100, int maxWaitCnt = 50) {
-    int counter = 0;
-    while (Tests::windowCount() != expectedWindowCnt) {
-        counter++;
-        std::this_thread::sleep_for(std::chrono::milliseconds(waitMillis));
-
-        if (counter > maxWaitCnt) {
-            NLog::log("{}Unmet expectation: {}", Colors::RED, expectation);
-            return false;
-        }
-    }
-    return true;
-}
-
 static std::string evalLua(std::string_view code) {
     return getFromSocket(std::format("/eval {}", code));
 }
@@ -219,13 +204,13 @@ TEST_CASE(gestures) {
     OK(getFromSocket("/eval hl.plugin.test.gesture('right', 5)"));
     OK(getFromSocket("/eval hl.plugin.test.gesture('right', 4)"));
 
-    EXPECT(waitForWindowCount(0, "Gesture sent paste exit + enter to kitty"), true);
+    Tests::waitUntilWindowsN(0);
 
     EXPECT(Tests::windowCount(), 0);
 
     OK(getFromSocket("/eval hl.plugin.test.gesture('left', 3)"));
 
-    EXPECT(waitForWindowCount(1, "Gesture spawned kitty"), true);
+    Tests::waitUntilWindowsN(1);
 
     EXPECT(Tests::windowCount(), 1);
 
@@ -312,7 +297,7 @@ TEST_CASE(gestures) {
 
     OK(getFromSocket("/eval hl.plugin.test.gesture('up', 3)"));
 
-    EXPECT(waitForWindowCount(0, "Gesture closed kitty"), true);
+    Tests::waitUntilWindowsN(0);
 
     ASSERT(Tests::windowCount(), 0);
 
