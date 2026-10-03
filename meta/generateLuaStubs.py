@@ -369,7 +369,7 @@ def parse_descriptor_fields(root: Path) -> dict[str, dict[str, str]]:
     out["HL.MonitorSpec"]["output"] = "string"
     out["HL.MonitorSpec"]["scale"] = "string|number"
     out["HL.DeviceSpec"]["name"] = "string"
-    out["HL.WorkspaceRuleSpec"]["workspace"] = "string"
+    out["HL.WorkspaceRuleSpec"]["workspace"] = "string|number"
     out["HL.WorkspaceRuleSpec"]["enabled"] = "boolean"
     out["HL.WorkspaceRuleSpec"]["layout_opts"] = "table<string, string|number|boolean>"
     out["HL.WindowRuleSpec"]["name"] = "string"
