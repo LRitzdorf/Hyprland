@@ -871,6 +871,11 @@ def generate_stub(root: Path) -> str:
     lines.append("hl = {}")
     lines.append("")
 
+    lines.append("---The original Lua `require`, without Hyprland's error-handling behavior.")
+    lines.append("---@see require")
+    lines.append("__require = require")
+    lines.append("")
+
     # include a tiny map of config key value types for users who query values dynamically
     lines.append("---@class HL.ConfigValueTypes")
     for key, typ in sorted(config_values.items()):
