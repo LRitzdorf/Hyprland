@@ -317,7 +317,6 @@ TEST_F(CConfigLuaDispatchers, enforcesFactoryArgumentLimits) {
         {"group.active", "{ index = 1 }"},
         {"group.move_window", "{ forward = true }"},
         {"group.lock", "{}"},
-        {"group.lock_active", "{}"},
         {"window.close", "{}"},
         {"window.kill", "{}"},
         {"window.signal", "{ signal = 15 }"},
@@ -385,7 +384,7 @@ TEST_F(CConfigLuaDispatchers, preservesOptionalFactoryArguments) {
     const auto result = m_manager->eval(R"(
         local factories = {
             hl.dsp.group.toggle, hl.dsp.group.next, hl.dsp.group.prev,
-            hl.dsp.group.move_window, hl.dsp.group.lock, hl.dsp.group.lock_active,
+            hl.dsp.group.move_window, hl.dsp.group.lock,
             hl.dsp.window.close, hl.dsp.window.kill, hl.dsp.window.float,
             hl.dsp.window.fullscreen, hl.dsp.window.pseudo, hl.dsp.window.center,
             hl.dsp.window.cycle_next, hl.dsp.window.clear_tags, hl.dsp.window.pin,
