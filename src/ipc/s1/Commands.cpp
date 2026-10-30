@@ -1860,7 +1860,7 @@ static std::string dispatchOutput(eHyprCtlOutputFormat format, std::string reque
             return "output not found";
 
         if (!PMONITOR->m_createdByUser)
-            return "cannot remove a real display. Use the monitor keyword.";
+            return "cannot remove a real display. Use hl.monitor to disable it instead.";
 
         PMONITOR->m_output->destroy();
     }
